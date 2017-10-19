@@ -21,5 +21,5 @@ library('randomForest') # classification algorithm
 train <- read.csv('~/DS310 Dengue/Data/dengue_features_train.csv', stringsAsFactors = F)
 test  <- read.csv('~/DS310 Dengue/Data/dengue_features_test.csv', stringsAsFactors = F)
 full  <- bind_rows(train, test)
-str(full)
+lm
 ```
