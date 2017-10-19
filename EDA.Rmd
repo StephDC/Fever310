@@ -18,8 +18,9 @@ library('mice') # imputation
 library('randomForest') # classification algorithm
 ```
 ```{r}
-train <- read.csv('~/DS310 Dengue/Data/dengue_features_train.csv', stringsAsFactors = F)
-test  <- read.csv('~/DS310 Dengue/Data/dengue_features_test.csv', stringsAsFactors = F)
-full  <- bind_rows(train, test)
-lm
+train <- data.frame(read.csv('~/DS310 Dengue/Data/dengue_features_train.csv', stringsAsFactors = F))
+test  <- data.frame(read.csv('~/DS310 Dengue/Data/dengue_features_test.csv', stringsAsFactors = F))
+labels <- data.frame(read.csv('~/DS310 Dengue/Data/dengue_labels_train.csv', stringsAsFactors = F))
+trainWithLabels  <- data.frame(cbind(train, labels$total_cases))
+
 ```
