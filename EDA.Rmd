@@ -1,0 +1,25 @@
+---
+title: "DengueFever"
+author: "Rafael Vinluan 953256870"
+date: "10/19/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library('ggplot2') # visualization
+library('ggthemes') # visualization
+library('scales') # visualization
+library('dplyr') # data manipulation
+library('mice') # imputation
+library('randomForest') # classification algorithm
+```
+```{r}
+train <- read.csv('~/DS310 Dengue/Data/dengue_features_train.csv', stringsAsFactors = F)
+test  <- read.csv('~/DS310 Dengue/Data/dengue_features_test.csv', stringsAsFactors = F)
+full  <- bind_rows(train, test)
+str(full)
+```
