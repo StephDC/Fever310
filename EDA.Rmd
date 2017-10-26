@@ -16,11 +16,29 @@ library('scales') # visualization
 library('dplyr') # data manipulation
 library('mice') # imputation
 library('randomForest') # classification algorithm
+library('rSymPy')
+library('polynom')
 ```
 ```{r}
 train <- data.frame(read.csv('~/DS310 Dengue/Data/dengue_features_train.csv', stringsAsFactors = F))
 test  <- data.frame(read.csv('~/DS310 Dengue/Data/dengue_features_test.csv', stringsAsFactors = F))
 labels <- data.frame(read.csv('~/DS310 Dengue/Data/dengue_labels_train.csv', stringsAsFactors = F))
+```
+```{r}
 trainWithLabels  <- data.frame(cbind(train, labels$total_cases))
+trainWithLabels <- trainWithLabels[complete.cases(trainWithLabels), ]
+trainIq <- trainWithLabels[trainWithLabels$city == 'iq',]
+trainIq <- trainIq[complete.cases(trainIq), ]
 
+trainSJ <- trainWithLabels[trainWithLabels$city == 'sj',]
+trainSJ <- trainIq[complete.cases(trainSJ), ]
+
+```
+```{r}
+trainWithLabels$week_start_date=strptime(trainWithLabels$week_start_date, format="%Y-%m-%d")
+startDateIq = ISOdate(2000,7,01)
+numWeeksIq <- c()
+for(i in length(trainIq))
+  save[i] <- difftime(trainIq$week_start_date[i], startDateIq, units=c('weeks'))
+#poly.calc(numWeek, trainIq$labels.total_cases)
 ```
