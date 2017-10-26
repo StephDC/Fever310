@@ -1,0 +1,320 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     12762,        312]
+NotebookOptionsPosition[     12192,        288]
+NotebookOutlinePosition[     12556,        304]
+CellTagsIndexPosition[     12513,        301]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"feature1", " ", "=", " ", 
+   RowBox[{
+   "Import", "[", 
+    "\"\<~/Box Sync/2017FA/DS 310/Data/dengue_sj_features_train.csv\>\"", 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"result1", " ", "=", " ", 
+   RowBox[{
+   "Import", "[", 
+    "\"\<~/Box Sync/2017FA/DS 310/Data/dengue_sj_labels_train.csv\>\"", 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"feature2", " ", "=", " ", 
+   RowBox[{
+   "Import", "[", 
+    "\"\<~/Box Sync/2017FA/DS 310/Data/dengue_iq_features_train.csv\>\"", 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"result2", " ", "=", " ", 
+   RowBox[{
+   "Import", "[", 
+    "\"\<~/Box Sync/2017FA/DS 310/Data/dengue_iq_labels_train.csv\>\"", 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"emptyElement", " ", "=", " ", 
+   RowBox[{"feature1", "[", 
+    RowBox[{"[", 
+     RowBox[{"89", ",", "19"}], "]"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"resultNum", " ", "=", " ", "4"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"data", " ", "=", " ", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"feature1", "[", 
+         RowBox[{"[", "1", "]"}], "]"}], "[", 
+        RowBox[{"[", "featureNum", "]"}], "]"}], ",", 
+       RowBox[{
+        RowBox[{"LinearModelFit", "[", 
+         RowBox[{
+          RowBox[{"DeleteMissing", "[", 
+           RowBox[{
+            RowBox[{"Table", "[", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"feature1", "[", 
+                   RowBox[{"[", "i", "]"}], "]"}], "[", 
+                  RowBox[{"[", "featureNum", "]"}], "]"}], "/.", 
+                 RowBox[{"emptyElement", "\[Rule]", 
+                  RowBox[{"Missing", "[", "]"}]}]}], ",", 
+                RowBox[{
+                 RowBox[{"result1", "[", 
+                  RowBox[{"[", "i", "]"}], "]"}], "[", 
+                 RowBox[{"[", "resultNum", "]"}], "]"}]}], "}"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"i", ",", "2", ",", 
+                RowBox[{"Length", "[", "feature1", "]"}]}], "}"}]}], "]"}], 
+            ",", "1", ",", "1"}], "]"}], ",", "x", ",", "x"}], "]"}], "[", 
+        "\"\<RSquared\>\"", "]"}], ",", 
+       RowBox[{
+        RowBox[{"LinearModelFit", "[", 
+         RowBox[{
+          RowBox[{"DeleteMissing", "[", 
+           RowBox[{
+            RowBox[{"Table", "[", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"feature2", "[", 
+                   RowBox[{"[", "i", "]"}], "]"}], "[", 
+                  RowBox[{"[", "featureNum", "]"}], "]"}], "/.", 
+                 RowBox[{"emptyElement", "\[Rule]", 
+                  RowBox[{"Missing", "[", "]"}]}]}], ",", 
+                RowBox[{
+                 RowBox[{"result2", "[", 
+                  RowBox[{"[", "i", "]"}], "]"}], "[", 
+                 RowBox[{"[", "resultNum", "]"}], "]"}]}], "}"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"i", ",", "2", ",", 
+                RowBox[{"Length", "[", "feature2", "]"}]}], "}"}]}], "]"}], 
+            ",", "1", ",", "1"}], "]"}], ",", "x", ",", "x"}], "]"}], "[", 
+        "\"\<RSquared\>\"", "]"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"featureNum", ",", "5", ",", "24"}], "}"}]}], "]"}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"TableForm", "[", "data", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+  "\"\<~/Box Sync/2017FA/DS 310/Fever310/correlation.csv\>\"", ",", "data"}], 
+  "]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.717439977405856*^9, 3.717440264170972*^9}, {
+   3.717440296563024*^9, 3.717440386441143*^9}, {3.717440437581697*^9, 
+   3.717440452796364*^9}, {3.7174404851801853`*^9, 3.717440492947029*^9}, {
+   3.7174405270359488`*^9, 3.717440531106249*^9}, {3.717440710239097*^9, 
+   3.717440714053718*^9}, {3.717440872765498*^9, 3.71744093332731*^9}, {
+   3.7174409983258553`*^9, 3.71744107664917*^9}, {3.717441110501309*^9, 
+   3.717441231034911*^9}, {3.71744129012563*^9, 3.717441295971546*^9}, {
+   3.717441331312269*^9, 3.71744147983707*^9}, {3.717441528573958*^9, 
+   3.717441532524839*^9}, {3.7174415757368298`*^9, 3.717441734097269*^9}, {
+   3.71744186727489*^9, 3.717441876575779*^9}, 3.7174420673803873`*^9, {
+   3.717442127055534*^9, 3.717442183844378*^9}, {3.717442268904545*^9, 
+   3.7174423014291077`*^9}, {3.7174424298350897`*^9, 3.717442452569138*^9}, {
+   3.7174426871371403`*^9, 3.71744271250303*^9}, {3.717442840149687*^9, 
+   3.717442894704558*^9}, {3.717442968505385*^9, 3.717442968607872*^9}, {
+   3.7174431335494213`*^9, 3.717443281813716*^9}, {3.717443329326614*^9, 
+   3.717443479816139*^9}, {3.71744360339258*^9, 3.717443662335943*^9}, {
+   3.7174437088670464`*^9, 3.717443941543972*^9}, {3.717444041924244*^9, 
+   3.71744414194748*^9}, {3.7174441746771383`*^9, 3.71744420485233*^9}, {
+   3.717444472598014*^9, 3.717444488752777*^9}, {3.717444704429528*^9, 
+   3.7174447053813467`*^9}, {3.717444865401946*^9, 3.717444913739603*^9}, {
+   3.717445069797841*^9, 3.7174453002482567`*^9}, {3.717445342332279*^9, 
+   3.717445557320475*^9}, {3.717445617693519*^9, 3.717445708744142*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"\<\"ndvi_ne\"\>", ",", "0.001416729163057174`", ",", 
+     "0.00040864909687209495`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"ndvi_nw\"\>", ",", "0.005671165967672175`", ",", 
+     "0.00009188653737531446`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"ndvi_se\"\>", ",", "1.2382726112505838`*^-6", ",", 
+     "0.001686465624773794`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"ndvi_sw\"\>", ",", "1.110170495787384`*^-7", ",", 
+     "0.001088946057814163`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"precipitation_amt_mm\"\>", ",", "0.0036253248679185756`", 
+     ",", "0.0081307207663096`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"reanalysis_air_temp_k\"\>", ",", "0.033093776139665305`", 
+     ",", "0.009427980515123042`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"reanalysis_avg_temp_k\"\>", ",", "0.03071867966334571`", ",",
+      "0.006379494355740071`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"reanalysis_dew_point_temp_k\"\>", ",", 
+     "0.04152394153482974`", ",", "0.05308481118058523`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"reanalysis_max_air_temp_k\"\>", ",", "0.037842627287424234`",
+      ",", "0.0031892646286169613`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"reanalysis_min_air_temp_k\"\>", ",", "0.03532253021411052`", 
+     ",", "0.04601623570629727`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"reanalysis_precip_amt_kg_per_m2\"\>", ",", 
+     "0.011547088237526938`", ",", "0.010235671295111413`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"reanalysis_relative_humidity_percent\"\>", ",", 
+     "0.020748875124031375`", ",", "0.01692151845864216`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"reanalysis_sat_precip_amt_mm\"\>", ",", 
+     "0.0036253248679185756`", ",", "0.0081307207663096`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"reanalysis_specific_humidity_g_per_kg\"\>", ",", 
+     "0.04324212441572233`", ",", "0.05592092293127624`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"reanalysis_tdtr_k\"\>", ",", "0.004569750394375769`", ",", 
+     "0.018069953610264044`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"station_avg_temp_c\"\>", ",", "0.03865807185950353`", ",", 
+     "0.012784772565602924`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"station_diur_temp_rng_c\"\>", ",", "0.0011992416047465358`", 
+     ",", "0.0033906994528467064`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"station_max_temp_c\"\>", ",", "0.03606228778618077`", ",", 
+     "0.005666853869770656`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"station_min_temp_c\"\>", ",", "0.031333225401424566`", ",", 
+     "0.044817887056141315`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"station_precip_mm\"\>", ",", "0.0026790161064527973`", ",", 
+     "0.0018468954369640993`"}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.717445502365919*^9, 3.717445524541883*^9}, 
+   3.7174455612948627`*^9, {3.717445683596986*^9, 3.717445714169553*^9}}],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {"\<\"ndvi_ne\"\>", "0.001416729163057174`", "0.00040864909687209495`"},
+    {"\<\"ndvi_nw\"\>", "0.005671165967672175`", "0.00009188653737531446`"},
+    {"\<\"ndvi_se\"\>", "1.2382726112505838`*^-6", "0.001686465624773794`"},
+    {"\<\"ndvi_sw\"\>", "1.110170495787384`*^-7", "0.001088946057814163`"},
+    {"\<\"precipitation_amt_mm\"\>", "0.0036253248679185756`", 
+     "0.0081307207663096`"},
+    {"\<\"reanalysis_air_temp_k\"\>", "0.033093776139665305`", 
+     "0.009427980515123042`"},
+    {"\<\"reanalysis_avg_temp_k\"\>", "0.03071867966334571`", 
+     "0.006379494355740071`"},
+    {"\<\"reanalysis_dew_point_temp_k\"\>", "0.04152394153482974`", 
+     "0.05308481118058523`"},
+    {"\<\"reanalysis_max_air_temp_k\"\>", "0.037842627287424234`", 
+     "0.0031892646286169613`"},
+    {"\<\"reanalysis_min_air_temp_k\"\>", "0.03532253021411052`", 
+     "0.04601623570629727`"},
+    {"\<\"reanalysis_precip_amt_kg_per_m2\"\>", "0.011547088237526938`", 
+     "0.010235671295111413`"},
+    {"\<\"reanalysis_relative_humidity_percent\"\>", "0.020748875124031375`", 
+     "0.01692151845864216`"},
+    {"\<\"reanalysis_sat_precip_amt_mm\"\>", "0.0036253248679185756`", 
+     "0.0081307207663096`"},
+    {"\<\"reanalysis_specific_humidity_g_per_kg\"\>", "0.04324212441572233`", 
+     "0.05592092293127624`"},
+    {"\<\"reanalysis_tdtr_k\"\>", "0.004569750394375769`", 
+     "0.018069953610264044`"},
+    {"\<\"station_avg_temp_c\"\>", "0.03865807185950353`", 
+     "0.012784772565602924`"},
+    {"\<\"station_diur_temp_rng_c\"\>", "0.0011992416047465358`", 
+     "0.0033906994528467064`"},
+    {"\<\"station_max_temp_c\"\>", "0.03606228778618077`", 
+     "0.005666853869770656`"},
+    {"\<\"station_min_temp_c\"\>", "0.031333225401424566`", 
+     "0.044817887056141315`"},
+    {"\<\"station_precip_mm\"\>", "0.0026790161064527973`", 
+     "0.0018468954369640993`"}
+   },
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}},
+   GridBoxSpacings->{"Columns" -> {
+       Offset[0.27999999999999997`], {
+        Offset[2.0999999999999996`]}, 
+       Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+       Offset[0.2], {
+        Offset[0.4]}, 
+       Offset[0.2]}, "RowsIndexed" -> {}}],
+  Function[BoxForm`e$, 
+   TableForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.717445502365919*^9, 3.717445524541883*^9}, 
+   3.7174455612948627`*^9, {3.717445683596986*^9, 3.7174457142420692`*^9}}],
+
+Cell[BoxData["\<\"~/Box Sync/2017FA/DS 310/Fever310/correlation.csv\"\>"], \
+"Output",
+ CellChangeTimes->{{3.717445502365919*^9, 3.717445524541883*^9}, 
+   3.7174455612948627`*^9, {3.717445683596986*^9, 3.717445714320726*^9}}]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.7174411601442957`*^9, 3.717441161290284*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"stationPrec", "[", 
+  RowBox[{"[", "88", "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.717441676858543*^9, 3.717441680160534*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"\"\>", ",", "81"}], "}"}]], "Output",
+ CellChangeTimes->{3.717441680498105*^9}]
+}, Open  ]]
+},
+WindowSize->{808, 695},
+WindowMargins->{{4, Automatic}, {Automatic, 4}},
+FrontEndVersion->"11.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (2016\:5e747\
+\:670828\:65e5)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 5394, 122, 606, "Input"],
+Cell[5977, 146, 3043, 64, 354, "Output"],
+Cell[9023, 212, 2510, 52, 388, "Output"],
+Cell[11536, 266, 226, 3, 90, "Output"]
+}, Open  ]],
+Cell[11777, 272, 94, 1, 32, "Input"],
+Cell[CellGroupData[{
+Cell[11896, 277, 154, 3, 32, "Input"],
+Cell[12053, 282, 123, 3, 32, "Output"]
+}, Open  ]]
+}
+]
+*)
+
