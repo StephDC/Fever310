@@ -7,7 +7,7 @@ echo PREFIX=$PREF
 ## Using an ls -l to print info about the data files
 ## Put any preprocessing stuff below to replace the ls -l ../Data
 ls -l "$PREF/Data"
-ls /tmp/DS310 || mkdir /tmp/DS310
+ls /tmp/DS310 2>/dev/null || mkdir /tmp/DS310
 python3 "$PREF/Fever310/mergeLabel.py" "$PREF/Data/dengue_features_train.csv" "$PREF/Data/dengue_labels_train.csv" /tmp/DS310/merge.csv
 python3 "$PREF/Fever310/getWeekNum.py" "$PREF/Data/submission_format.csv" /tmp/DS310/submit.csv
 head -n 1 /tmp/DS310/merge.csv > /tmp/DS310/sj.csv

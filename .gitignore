@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# R files
+.Rhistory
+.RData
+
 # C extensions
 *.so
 
