@@ -10,35 +10,157 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-library('ggplot2') # visualization
-library('ggthemes') # visualization
-library('scales') # visualization
-library('dplyr') # data manipulation
-library('mice') # imputation
-library('randomForest') # classification algorithm
-library('rSymPy')
-library('polynom')
+pkgs <- c('tidyverse', 'corrplot', 'magrittr', 'zoo', 'RColorBrewer', 'gridExtra',
+          'MASS','dplyr', 'magrittr')
+invisible(lapply(pkgs, require, character.only = T))
 ```
-```{r}
-train <- data.frame(read.csv('~/DS310 Dengue/Data/dengue_features_train.csv', stringsAsFactors = F))
-test  <- data.frame(read.csv('~/DS310 Dengue/Data/dengue_features_test.csv', stringsAsFactors = F))
-labels <- data.frame(read.csv('~/DS310 Dengue/Data/dengue_labels_train.csv', stringsAsFactors = F))
-```
-```{r}
-trainWithLabels  <- data.frame(cbind(train, labels$total_cases))
-trainWithLabels <- trainWithLabels[complete.cases(trainWithLabels), ]
-trainIq <- trainWithLabels[trainWithLabels$city == 'iq',]
-trainIq <- trainIq[complete.cases(trainIq), ]
 
-trainSJ <- trainWithLabels[trainWithLabels$city == 'sj',]
-trainSJ <- trainIq[complete.cases(trainSJ), ]
+```{r}
+## Data Loading
+train_features = read.csv('~/DS310 Dengue/Data/dengue_features_train.csv')
+train_labels   = read.csv('~/DS310 Dengue/Data/dengue_labels_train.csv')
+
+
+# Seperate data by city
+sj_train_features = train_features %>% filter(train_features$city == 'sj')
+sj_train_labels   = train_labels   %>% filter(train_features$city == 'sj')
+
+iq_train_features = train_features %>% filter(train_features$city == 'iq')
+iq_train_labels   = train_labels   %>% filter(train_features$city == 'iq')
+```
+
+```{r}
+##MAKE THE FUCKING WEEKS SINCE 1990 JAN 1 
+train_features$week_start_date=strptime(train_features$week_start_date, format="%Y-%m-%d")
+startDate = ISOdate(1990,01,01)
+numWeeks <- c()
+for(i in length(train_features))
+  numWeeks[i] <- difftime(train_features$week_start_date[i], startDate, units = "weeks")
+```
+
+```{r}
+# impute NAs by the latest value
+sj_train_features$ndvi_ne %<>% na.locf(fromLast = TRUE)
+iq_train_features$ndvi_ne %<>% na.locf(fromLast = TRUE)
 
 ```
+
+
 ```{r}
-trainWithLabels$week_start_date=strptime(trainWithLabels$week_start_date, format="%Y-%m-%d")
-startDateIq = ISOdate(2000,7,01)
-numWeeksIq <- c()
-for(i in length(trainIq))
-  save[i] <- difftime(trainIq$week_start_date[i], startDateIq, units=c('weeks'))
-#poly.calc(numWeek, trainIq$labels.total_cases)
+preprocessData <- function(data_path, labels_path = NULL)
+{
+  # load data 
+  df <- read.csv(data_path)
+  
+  # features we want
+  features = c("reanalysis_specific_humidity_g_per_kg", "reanalysis_dew_point_temp_k",
+               "station_avg_temp_c", "station_min_temp_c")
+  
+  # fill missing values
+  df[features] %<>% na.locf(fromLast = TRUE) 
+  
+  # add city if labels data aren't provided
+  if (is.null(labels_path)) features %<>% c("city", "year", "weekofyear")
+    
+  # select features we want
+  df <- df[features]
+  
+  # add labels to dataframe
+  if (!is.null(labels_path)) df %<>% cbind(read.csv(labels_path))
+  
+  # filter by city
+  df_sj <- filter(df, city == 'sj')
+  df_iq <- filter(df, city == 'iq')
+  
+  # return a list with the 2 data frames 
+  return(list(df_sj, df_iq))
+}
+
+
+
+# preprocess the .csv files
+preprocessData(data_path = '~/DS310 Dengue/Data/dengue_features_train.csv', labels_path = '~/DS310 Dengue/Data/dengue_labels_train.csv') -> trains
+sj_train <- trains[[1]]; iq_train <- as.data.frame(trains[2])
+```
+
+```{r}
+# split up the data
+sj_train_subtrain <- head(sj_train, 800)
+sj_train_subtest  <- tail(sj_train, nrow(sj_train) - 800)
+
+iq_train_subtrain <- head(iq_train, 400)
+iq_train_subtest  <- tail(iq_train, nrow(sj_train) - 400)
+
+```
+
+```{r}
+# function that returns Mean Absolute Error
+mae <- function(error) return(mean(abs(error)) )
+
+get_bst_model <- function(train, test)
+{
+  
+  # Step 1: specify the form of the model
+  form <- "total_cases ~ 1 +
+            reanalysis_specific_humidity_g_per_kg +
+            reanalysis_dew_point_temp_k + 
+            station_avg_temp_c +
+            station_min_temp_c"
+
+  grid = 10 ^(seq(-8, -3,1))
+
+  best_alpha = c()
+  best_score = 1000
+  
+  # Step 2: Find the best hyper parameter, alpha
+  for (i in grid)
+    {
+      model = glm.nb(formula = form,
+                     data = train,
+                     init.theta = i)
+    
+      results <-  predict(model, test)
+      score   <-  mae(test$total_cases - results)
+      
+      if (score < best_score) {
+          best_alpha <- i
+          best_score <- score
+          cat('\nbest score = ', best_score, '\twith alpha = ', best_alpha)
+        }
+  }
+  
+  # Step 3: refit on entire dataset
+  combined <- rbind(train, test)
+  combined_model = glm.nb(formula=form,
+                          data = combined,
+                          init.theta = best_alpha)
+  
+  return (combined_model)
+}
+
+
+
+sj_model <- get_bst_model(sj_train_subtrain, sj_train_subtest)
+
+iq_model <- get_bst_model(iq_train_subtrain, iq_train_subtest)
+
+```
+
+```{r}
+# submitting the predictions
+tests <- preprocessData('~/DS310 Dengue/Data/dengue_features_test.csv')
+sj_test <- tests[[1]]; iq_test <- tests[[2]]
+
+sj_test$predicted = predict(sj_model , sj_test, type = 'response')
+iq_test$predicted = predict(iq_model , iq_test, type = 'response')
+
+submissions = read.csv('~/DS310 Dengue/Data/submission_format.csv')
+inner_join(submissions, rbind(sj_test,iq_test)) %>%
+  dplyr::select(city, year, weekofyear, total_cases = predicted) ->
+predictions
+
+## Joining, by = c("city", "year", "weekofyear")
+
+predictions$total_cases %<>% round()
+write.csv(predictions, 'submitpredictions.csv', row.names = FALSE)
 ```
