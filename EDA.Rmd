@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 pkgs <- c('tidyverse', 'corrplot', 'magrittr', 'zoo', 'RColorBrewer', 'gridExtra',
-          'MASS','dplyr', 'magrittr')
+          'MASS','dplyr', 'magrittr','lubridate')
 invisible(lapply(pkgs, require, character.only = T))
 ```
 
@@ -30,19 +30,18 @@ iq_train_labels   = train_labels   %>% filter(train_features$city == 'iq')
 ```
 
 ```{r}
-##MAKE THE FUCKING WEEKS SINCE 1990 JAN 1 
-train_features$week_start_date=strptime(train_features$week_start_date, format="%Y-%m-%d")
-startDate = ISOdate(1990,01,01)
-numWeeks <- c()
-for(i in length(train_features))
-  numWeeks[i] <- difftime(train_features$week_start_date[i], startDate, units = "weeks")
-```
-
-```{r}
 # impute NAs by the latest value
 sj_train_features$ndvi_ne %<>% na.locf(fromLast = TRUE)
 iq_train_features$ndvi_ne %<>% na.locf(fromLast = TRUE)
 
+```
+
+```{r}
+## count weeks since 1990 JAN 1 
+train_features$week_start_date = as.Date(as.character(train_features$week_start_date))
+startDate = as.Date(as.character("1990-01-01"))
+train_features$numWeeks <- ymd(train_features$week_start_date)-
+                 ymd(startDate)
 ```
 
 
@@ -76,8 +75,6 @@ preprocessData <- function(data_path, labels_path = NULL)
   return(list(df_sj, df_iq))
 }
 
-
-
 # preprocess the .csv files
 preprocessData(data_path = '~/DS310 Dengue/Data/dengue_features_train.csv', labels_path = '~/DS310 Dengue/Data/dengue_labels_train.csv') -> trains
 sj_train <- trains[[1]]; iq_train <- as.data.frame(trains[2])
@@ -97,8 +94,7 @@ iq_train_subtest  <- tail(iq_train, nrow(sj_train) - 400)
 # function that returns Mean Absolute Error
 mae <- function(error) return(mean(abs(error)) )
 
-get_bst_model <- function(train, test)
-{
+get_bst_model <- function(train, test) {
   
   # Step 1: specify the form of the model
   form <- "total_cases ~ 1 +
