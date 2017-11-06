@@ -1,0 +1,29 @@
+iqData = Import["/tmp/DS310/iq.csv"];
+sjData = Import["/tmp/DS310/sj.csv"];
+Data = {Table[{iqData[[i]][[1]], 
+     iqData[[i]][[Length[iqData[[i]]]]]}, {i, 2, Length[iqData]}], 
+   Table[{sjData[[i]][[1]], sjData[[i]][[Length[sjData[[i]]]]]}, {i, 
+     2, Length[sjData]}]};
+Model = Table[
+  NonlinearModelFit[Data[[i]], 
+   a*Sin[\[Pi]/26*x + b] + c*Sin[\[Pi]/52*x + d] + e, {a, b, c, d, e},
+    x], {i, 1, 2}]
+Model[[1]]["RSquared"]
+Model[[1]]["ANOVATable"]
+Model[[2]]["RSquared"]
+Model[[2]]["ANOVATable"]
+Show[Plot[{Model[[1]][n], Model[[2]][n]}, {n, 1, 1500}], 
+ ListPlot[Data]]
+ListPlot[Table[
+  Table[{Data[[j]][[i]][[1]], 
+    Data[[j]][[i]][[2]] - Model[[j]][Data[[j]][[i]][[1]]]}, {i, 1, 
+    Length[Data[[j]]]}], {j, 1, 2}]]
+resFormat = Import["/tmp/DS310/submit.csv"];
+resCSV = Join[{Table[
+     resFormat[[1]][[i]], {i, 2, Length[resFormat[[1]]]}]}, 
+   Table[{resFormat[[i]][[2]], resFormat[[i]][[3]], 
+     resFormat[[i]][[4]], 
+     Max[0, IntegerPart[
+       Model[[Position[{"iq", "sj"}, resFormat[[i]][[2]]][[1]][[1]]]][
+        resFormat[[i]][[1]]]]]}, {i, 2, Length[resFormat]}]];
+Export["/tmp/DS310/result.csv", resCSV]
