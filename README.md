@@ -1,4 +1,4 @@
-# Fever310 - Predict the cases of Dengul Fever
+# Fever310 - Predict the cases of Dengue Fever
 
 Group project.
 

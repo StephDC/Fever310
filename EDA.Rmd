@@ -17,8 +17,8 @@ invisible(lapply(pkgs, require, character.only = T))
 
 ```{r}
 ## Data Loading
-train_features = read.csv('~/DS310 Dengue/Data/dengue_features_train.csv')
-train_labels   = read.csv('~/DS310 Dengue/Data/residualPositive.csv')
+train_features = read.csv('~/DS310 Dengue/Data/dengue_features_train_standing_water.csv')
+train_labels   = read.csv('~/DS310 Dengue/Data/dengue_labels_train.csv')
 
 
 # Seperate data by city
@@ -51,9 +51,11 @@ preprocessData <- function(data_path, labels_path = NULL)
   # load data 
   df <- read.csv(data_path)
   
-  # features we want
+  # specify features we want
   features = c("reanalysis_specific_humidity_g_per_kg", "reanalysis_dew_point_temp_k",
-               "station_avg_temp_c", "station_min_temp_c")
+               "station_avg_temp_c", "station_min_temp_c","precipitation_amt_mm",
+               "reanalysis_relative_humidity_percent",
+               "standing_water")
   
   # fill missing values
   df[features] %<>% na.locf(fromLast = TRUE) 
@@ -76,7 +78,7 @@ preprocessData <- function(data_path, labels_path = NULL)
 }
 
 # preprocess the .csv files
-preprocessData(data_path = '~/DS310 Dengue/Data/dengue_features_train.csv', labels_path = '~/DS310 Dengue/Data/residualPositive.csv') -> trains
+preprocessData(data_path = '~/DS310 Dengue/Data/dengue_features_train_standing_water.csv', labels_path = '~/DS310 Dengue/Data/dengue_labels_train.csv') -> trains
 sj_train <- trains[[1]]; iq_train <- as.data.frame(trains[2])
 ```
 
@@ -99,8 +101,14 @@ get_bst_model <- function(train, test)
   
   # Step 1: specify the form of the model
   form <- "total_cases ~ 1 +
-            station_avg_temp_c + reanalysis_specific_humidity_g_per_kg"
-
+            reanalysis_specific_humidity_g_per_kg +
+            reanalysis_dew_point_temp_k + 
+            station_avg_temp_c +
+            station_min_temp_c +
+            precipitation_amt_mm + 
+            reanalysis_relative_humidity_percent + 
+            standing_water"
+  
   grid = 10 ^(seq(-8, -3,1))
 
   best_alpha = c()
@@ -135,13 +143,16 @@ get_bst_model <- function(train, test)
 
 sj_model <- get_bst_model(sj_train_subtrain, sj_train_subtest)
 
+```
+
+```{r}
 iq_model <- get_bst_model(iq_train_subtrain, iq_train_subtest)
 
 ```
 
 ```{r}
 # submitting the predictions
-tests <- preprocessData('~/DS310 Dengue/Data/dengue_features_test.csv')
+tests <- preprocessData('~/DS310 Dengue/Data/dengue_features_test_standing_water.csv')
 sj_test <- tests[[1]]; iq_test <- tests[[2]]
 
 sj_test$predicted = predict(sj_model , sj_test, type = 'response')
